@@ -5,9 +5,7 @@ Each function takes a DataFrame and returns a transformed DataFrame.
 No prints here: findings, measurements and checks are in the notebook.
 Functions are listed in the order they must be applied (see STEPS at the bottom).
 """
-import os
 import pandas as pd
-import kagglehub
 
 COUNTRIES = {
     "EIRE": "Ireland",
@@ -36,18 +34,8 @@ ERROR_CATEGORIES = {
 # All error words combined
 ERROR_WORDS = "|".join(ERROR_CATEGORIES.values())
 
-# Inconsistent invoices: 3 abnormal sales and their refunds
-# 581483 / C581484 and 541431 / C541433: huge quantities
-# 556444 / C556448: inconsistent price
+# Inconsistent invoices
 OUTLIER_INVOICES = ["581483", "C581484", "541431", "C541433", "556444", "C556448"]
-
-
-def load():
-    """Load the CSV. Download the latest version from Kaggle."""
-    folder = kagglehub.dataset_download("mashlyn/online-retail-ii-uci")
-    path = os.path.join(folder, "online_retail_II.csv")
-    return pd.read_csv(path, dtype={"Invoice": str, "StockCode": str})
-
 
 def fix_types(df):
     """Customer ID float -> integer, dates to datetime."""
@@ -181,9 +169,3 @@ def transform(df):
     for step in STEPS:
         df = step(df)
     return df
-
-
-if __name__ == "__main__":
-    df = transform(load())
-    print(df.shape)
-    print(df.head())
