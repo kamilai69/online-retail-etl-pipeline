@@ -14,7 +14,7 @@ BEGIN
 	select distinct stock_code, 'UNKNOWN PRODUCT'
 	from sales
 	on conflict (stock_code) do nothing;
-	GET DIAGNOSTICS n_error = ROW_COUNT;
+	GET DIAGNOSTICS n_unknown = ROW_COUNT;
 
 	raise notice '% product line inserted of which % were error line', n+n_unknown, n_unknown;
 END;

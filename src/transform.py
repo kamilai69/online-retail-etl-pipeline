@@ -35,7 +35,9 @@ ERROR_CATEGORIES = {
 ERROR_WORDS = "|".join(ERROR_CATEGORIES.values())
 
 # Inconsistent invoices
-OUTLIER_INVOICES = ["581483", "C581484", "541431", "C541433", "556444", "C556448"]
+OUTLIER_INVOICES = ["581483", "C581484", "541431", "C541433", "556444", "C556448", 
+                    "508094", "508095", "508096", "C508140", "C508134", "C508132",
+                    "540815", "540818", "C550456"]
 
 def fix_types(df):
     """Customer ID float -> integer, dates to datetime."""
