@@ -1,0 +1,20 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
+  "name": "b5038bfec625c04fe6d1",
+  "displayName": "Overview",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "visualInteractions": [
+    {
+      "source": "slicerYear",
+      "target": "lineMonthly",
+      "type": "NoFilter"
+    },
+    {
+      "source": "slicerYear",
+      "target": "kpiYoY",
+      "type": "NoFilter"
+    }
+  ]
+}

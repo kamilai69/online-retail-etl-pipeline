@@ -1,0 +1,46 @@
+/// Customer dimension. One row per customer. customer_id -1 = unknown customer.
+table customer
+	lineageTag: 5ddf0470-5a1e-4951-a553-8923669cef6e
+
+	/// Customer identifier. -1 = unknown customer, excluded from customer analysis.
+	column customer_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 51c69806-c3db-4eab-b7f4-bc2eda5f9319
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Net Revenue of the customer over the whole period (sales minus refunds). Used to rank customers.
+	column 'Customer Net Revenue' = [Net Revenue]
+		isHidden
+		formatString: £#,0
+		lineageTag: 379a5a37-0df5-43d9-a66c-9167a160cf25
+		summarizeBy: none
+
+	/// Identified customers split in two groups by Net Revenue over the whole period: Top 20% and Other 80%. The unknown customer (-1) has its own group.
+	column 'Customer Group' =
+			VAR KnownCustomers = FILTER(ALL(customer[customer_id], customer[Customer Net Revenue]), customer[customer_id] <> -1)
+			VAR TopSize = ROUND(COUNTROWS(KnownCustomers) * 0.2, 0)
+			VAR CustomerRank = RANKX(KnownCustomers, customer[Customer Net Revenue])
+			RETURN
+			    IF(
+			        customer[customer_id] = -1,
+			        "Unknown customer",
+			        IF(CustomerRank <= TopSize, "Top 20%", "Other 80%")
+			    )
+		lineageTag: 09cd6436-2c94-4b3e-9a1e-028dfb74707c
+		summarizeBy: none
+
+	partition 'public customer' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost:5432", "online_retail_db"),
+				    public_customer = Source{[Schema="public",Item="customer"]}[Data]
+				in
+				    public_customer
+
+	annotation PBI_ResultType = Table
+

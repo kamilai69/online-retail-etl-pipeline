@@ -1,0 +1,33 @@
+/// Product dimension. One row per stock code.
+table product
+	lineageTag: 20b947ab-383a-4428-af58-890f72cbfc51
+
+	/// Product code.
+	column stock_code
+		dataType: string
+		lineageTag: 5154ffd2-1169-4090-bef3-2c4562c25367
+		summarizeBy: none
+		sourceColumn: stock_code
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Product name.
+	column description
+		dataType: string
+		lineageTag: 2c2925bf-52bb-43b9-a5f0-ed756119a724
+		summarizeBy: none
+		sourceColumn: description
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'public product' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost:5432", "online_retail_db"),
+				    public_product = Source{[Schema="public",Item="product"]}[Data]
+				in
+				    public_product
+
+	annotation PBI_ResultType = Table
+

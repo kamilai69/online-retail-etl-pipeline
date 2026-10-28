@@ -1,0 +1,165 @@
+/// Fact table. One row per invoice line from Online Retail II (01 Dec 2009 to 09 Dec 2011): sales, refunds (negative revenue) and error lines (price 0).
+table fact_sales
+	lineageTag: 0adcfb4a-5908-41e9-82c7-cdec9306cffd
+
+	/// Technical row identifier from PostgreSQL.
+	column sale_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ea6dff1b-54cf-4108-8c4f-67917f309004
+		summarizeBy: none
+		sourceColumn: sale_id
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Invoice number. One invoice = one order. Invoices starting with C are cancellations.
+	column invoice
+		dataType: string
+		lineageTag: 3bab6f22-40e4-4e45-b081-a44d2320404a
+		summarizeBy: none
+		sourceColumn: invoice
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Product key. Linked to product[stock_code].
+	column stock_code
+		dataType: string
+		isHidden
+		lineageTag: 58fc900d-0c91-4ab4-bab4-b598b20ad950
+		summarizeBy: none
+		sourceColumn: stock_code
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Customer key. Linked to customer[customer_id]. -1 means unknown customer.
+	column customer_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 2f4946c2-66ed-4b83-b714-05239c591614
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Invoice date and time. Use the Calendar table to filter by date.
+	column invoice_date
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: ece81213-3b83-4641-b35e-bbe3080a75e8
+		summarizeBy: none
+		sourceColumn: invoice_date
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Country of the customer who placed the order.
+	column country
+		dataType: string
+		lineageTag: 1e4e4d1e-8d64-41c7-b143-582eb3b9a690
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Units on the line. Negative for refunds.
+	column quantity
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9846bb69-50f3-42fb-8e45-fc8654cc7bee
+		summarizeBy: sum
+		sourceColumn: quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Unit price in GBP. 0 on error lines.
+	column price
+		dataType: double
+		formatString: £#,0.00
+		lineageTag: 8f258720-b5e6-4b56-b794-0c817bcc8a2f
+		summarizeBy: none
+		sourceColumn: price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// quantity × price in GBP. Negative for refunds. Use the Net Revenue measure instead.
+	column revenue
+		dataType: double
+		isHidden
+		formatString: £#,0
+		lineageTag: 62363647-b780-4683-9e8e-264ab6e1a4c3
+		summarizeBy: sum
+		sourceColumn: revenue
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Type of line: sale, refund or error.
+	column line_type
+		dataType: string
+		lineageTag: d26410f2-a962-4b73-ac1d-b888a5ba0357
+		summarizeBy: none
+		sourceColumn: line_type
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Reason why a line is classified as error (blank for sales and refunds).
+	column error_category
+		dataType: string
+		lineageTag: 16a5781f-fd63-49a4-9c18-ec709ce0301f
+		summarizeBy: none
+		sourceColumn: error_category
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Invoice date without time. Linked to Calendar[Date].
+	column date
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: 72f38305-b21f-477b-ad67-81d7fcf53820
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Hour of the invoice (0-23). Used for the weekday × hour heatmap.
+	column Hour = HOUR(fact_sales[invoice_date])
+		dataType: int64
+		formatString: 0
+		lineageTag: 33bf544b-760d-4e4c-8fbd-f9f452dbfa09
+		summarizeBy: none
+
+	/// United Kingdom or International (all other countries).
+	column Market = IF(fact_sales[country] = "United Kingdom", "United Kingdom", "International")
+		dataType: string
+		lineageTag: 551de22b-b5d1-468b-875d-7bd9d87af7c5
+		summarizeBy: none
+
+	/// Error category without the "_ERROR" suffix (DAMAGE, MISSING...). Used in the Data Quality pie.
+	column 'Error Type' = SUBSTITUTE(fact_sales[error_category], "_ERROR", "")
+		dataType: string
+		lineageTag: 2a4a2959-e44a-4644-b9fa-3be585df0395
+		summarizeBy: none
+
+	partition 'public fact_sales' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost:5432", "online_retail_db"),
+				    public_fact_sales = Source{[Schema="public",Item="fact_sales"]}[Data],
+				    #"Date insérée" = Table.AddColumn(public_fact_sales, "Date", each DateTime.Date([invoice_date]), type date),
+				    #"Colonnes renommées" = Table.RenameColumns(#"Date insérée",{{"Date", "date"}})
+				in
+				    #"Colonnes renommées"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

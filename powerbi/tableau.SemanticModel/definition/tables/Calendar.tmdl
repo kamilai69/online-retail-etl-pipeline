@@ -1,0 +1,93 @@
+/// Date dimension, marked as date table. Needed for time comparisons (previous year) and time axes.
+table Calendar
+	lineageTag: 5efb65b8-4b82-42dd-a952-5ac0d9448ba9
+	dataCategory: Time
+
+	/// One row per day from 01 Dec 2009 to 31 Dec 2011.
+	column Date
+		isKey
+		formatString: dd/mm/yyyy
+		lineageTag: cda0fdc8-b483-4cf3-bbc5-98fd4df9e6d8
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Calendar year.
+	column Year
+		formatString: 0
+		lineageTag: 7bfcbbf9-3171-42a2-8b19-8d76aadece44
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Month number 1-12. Used to sort Month.
+	column 'Month Number'
+		isHidden
+		formatString: 0
+		lineageTag: a1f810e5-6a11-4c4c-a027-8e22814dfc02
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Short month name in English (Jan, Feb...). Sorted by Month Number.
+	column Month
+		lineageTag: 60466b40-a073-469d-924d-5f3d8ba0be2b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month]
+		sortByColumn: 'Month Number'
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Year and month as yyyy-mm, for monthly axes.
+	column Year-Month
+		lineageTag: f106c41b-e583-466a-9643-0624abb2a4ac
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year-Month]
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Day of week, Monday = 1 to Sunday = 7. Used to sort Weekday.
+	column 'Weekday Number'
+		isHidden
+		formatString: 0
+		lineageTag: a13f53bf-f4f7-4d30-b70a-382923ea5077
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Weekday Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Short day name in English (Mon, Tue...). Sorted by Weekday Number.
+	column Weekday
+		lineageTag: 6c93ff6a-9ee3-4e3e-aaa5-6204795615b2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Weekday]
+		sortByColumn: 'Weekday Number'
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendar = calculated
+		mode: import
+		source =
+				
+				ADDCOLUMNS(
+				    CALENDAR(DATE(2009,12,1), DATE(2011,12,31)),
+				    "Year", YEAR([Date]),
+				    "Month Number", MONTH([Date]),
+				    "Month", FORMAT([Date], "mmm", "en-US"),
+				    "Year-Month", FORMAT([Date], "yyyy-mm"),
+				    "Weekday Number", WEEKDAY([Date], 2),
+				    "Weekday", FORMAT([Date], "ddd", "en-US")
+				)
+
+	annotation PBI_Id = 3922be47085c4353b67629bf128e4168
+

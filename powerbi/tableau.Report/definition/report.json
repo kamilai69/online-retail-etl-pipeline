@@ -1,0 +1,173 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY26SU02",
+      "reportVersionAtImport": {
+        "visual": "2.6.0",
+        "report": "3.1.0",
+        "page": "2.3.0"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "OnlineRetailTheme.json",
+      "reportVersionAtImport": {
+        "visual": "2.6.0",
+        "report": "3.1.0",
+        "page": "2.3.0"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY26SU02",
+          "path": "BaseThemes/CY26SU02.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "icon_alert_rd27102026.png",
+          "path": "icon_alert_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_bag_rd27102026.png",
+          "path": "icon_bag_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_basket_rd27102026.png",
+          "path": "icon_basket_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_box_rd27102026.png",
+          "path": "icon_box_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_package_rd27102026.png",
+          "path": "icon_package_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_percent_rd27102026.png",
+          "path": "icon_percent_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_pound_rd27102026.png",
+          "path": "icon_pound_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_receipt_rd27102026.png",
+          "path": "icon_receipt_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_refund_rd27102026.png",
+          "path": "icon_refund_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_repeat_rd27102026.png",
+          "path": "icon_repeat_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_step1_rd28102026.png",
+          "path": "icon_step1_rd28102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_step2_rd28102026.png",
+          "path": "icon_step2_rd28102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_step3_rd28102026.png",
+          "path": "icon_step3_rd28102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_step4_rd28102026.png",
+          "path": "icon_step4_rd28102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_tag_rd27102026.png",
+          "path": "icon_tag_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_trend_rd27102026.png",
+          "path": "icon_trend_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_usercheck_rd27102026.png",
+          "path": "icon_usercheck_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "icon_users_rd27102026.png",
+          "path": "icon_users_rd27102026.png",
+          "type": "Image"
+        },
+        {
+          "name": "OnlineRetailTheme.json",
+          "path": "OnlineRetailTheme.json",
+          "type": "CustomTheme"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  }
+}

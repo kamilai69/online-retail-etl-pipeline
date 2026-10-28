@@ -1,0 +1,23 @@
+model Model
+	culture: fr-FR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: fr-FR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["_Measures","customer","fact_sales","product"]
+
+annotation PBI_ProTooling = ["DevMode","MCP-PBIModeling"]
+
+ref table customer
+ref table fact_sales
+ref table product
+ref table Calendar
+ref table _Measures
+ref table 'Customers by Quarter'
+
+ref cultureInfo fr-FR
+

@@ -1,0 +1,52 @@
+/// One row per known customer and per quarter in which this customer bought something. Used for the quarterly retention (Customers page).
+table 'Customers by Quarter'
+	lineageTag: ce72a254-d544-42a5-823b-56414d3dff95
+
+	/// Customer ID (unknown customer -1 excluded).
+	column Customer
+		formatString: 0
+		lineageTag: 7ed397a0-632c-48b1-b56d-11229408ad18
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Customer]
+
+	/// Calendar quarter of the purchases, for example 2010-Q1.
+	column Quarter
+		lineageTag: f5c7f4ec-698c-42b1-ba5e-1637f945d74c
+		isNameInferred
+		sourceColumn: [Quarter]
+
+	/// Year × 4 + quarter. Adding 1 gives the following quarter, also across years.
+	column 'Quarter Number'
+		isHidden
+		lineageTag: dce08261-918c-447e-8b1b-4a2d693e008d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Quarter Number]
+
+	/// 1 if the customer bought again in the following quarter, 0 if not.
+	column 'Back Next Quarter' =
+			VAR ThisCustomer = 'Customers by Quarter'[Customer]
+			VAR FollowingQuarter = 'Customers by Quarter'[Quarter Number] + 1
+			RETURN
+			    IF(
+			        CONTAINS('Customers by Quarter', [Customer], ThisCustomer, [Quarter Number], FollowingQuarter),
+			        1,
+			        0
+			    )
+		dataType: int64
+		lineageTag: 19a4ba9c-a977-4b78-a2ba-8f740d42c1c3
+		summarizeBy: none
+
+	partition 'Customers by Quarter' = calculated
+		mode: import
+		source =
+				DISTINCT(
+				    SELECTCOLUMNS(
+				        FILTER(fact_sales, fact_sales[line_type] = "sale" && fact_sales[customer_id] <> -1),
+				        "Customer", fact_sales[customer_id],
+				        "Quarter", YEAR(fact_sales[date]) & "-Q" & QUARTER(fact_sales[date]),
+				        "Quarter Number", YEAR(fact_sales[date]) * 4 + QUARTER(fact_sales[date])
+				    )
+				)
+

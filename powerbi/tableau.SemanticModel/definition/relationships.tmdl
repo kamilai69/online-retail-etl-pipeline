@@ -1,0 +1,16 @@
+relationship 647c2c45-5dcd-4a22-b920-ca525bfe4a9c
+	fromColumn: fact_sales.customer_id
+	toColumn: customer.customer_id
+
+	annotation PBI_IsFromSource = FS
+
+relationship 6c527253-ec30-430f-973d-e43ab9dc075d
+	fromColumn: fact_sales.stock_code
+	toColumn: product.stock_code
+
+	annotation PBI_IsFromSource = FS
+
+relationship fact_sales_date_Calendar_Date
+	fromColumn: fact_sales.date
+	toColumn: Calendar.Date
+

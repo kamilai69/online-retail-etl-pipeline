@@ -1,0 +1,143 @@
+/// Holds all the report measures, grouped in display folders.
+table _Measures
+	lineageTag: daa8c3f1-7b2a-4029-91e1-ca92590a56cc
+
+	/// Revenue after refunds (sales + refunds, in GBP). Main metric of the report.
+	measure 'Net Revenue' = SUM(fact_sales[revenue])
+		formatString: £#,0
+		displayFolder: Revenue
+		lineageTag: 14c3255d-58f2-433e-83cf-8cf4bb696e21
+
+	/// Revenue from sale lines only, before refunds.
+	measure 'Gross Revenue' = CALCULATE([Net Revenue], fact_sales[line_type] = "sale")
+		formatString: £#,0
+		displayFolder: Revenue
+		lineageTag: 050ecfbb-5eb6-4b85-8482-380dbc5c72ea
+
+	/// Revenue from refund lines. Negative value.
+	measure 'Refunds Revenue' = CALCULATE([Net Revenue], fact_sales[line_type] = "refund")
+		formatString: £#,0
+		displayFolder: Revenue
+		lineageTag: 86789f0d-b47c-4fd8-bf8e-dd1d2b6bfc81
+
+	/// Share of gross revenue that was refunded.
+	measure 'Refund Rate' = DIVIDE(-[Refunds Revenue], [Gross Revenue])
+		formatString: 0.0%
+		displayFolder: Revenue
+		lineageTag: ee1d3921-79c0-4900-b2a7-a8ec0d04d85d
+
+	/// Number of distinct sale invoices. One invoice = one order.
+	measure Orders = CALCULATE(DISTINCTCOUNT(fact_sales[invoice]), fact_sales[line_type] = "sale")
+		formatString: #,0
+		displayFolder: Orders & Customers
+		lineageTag: 99ecda15-b45e-4de0-8d81-41b981649050
+
+	/// Average gross revenue per order.
+	measure 'Avg Order Value' = DIVIDE([Gross Revenue], [Orders])
+		formatString: £#,0.00
+		displayFolder: Orders & Customers
+		lineageTag: c9e01a1d-aae1-4a3a-b864-48f7eb4bcbad
+
+	/// Number of distinct known customers who bought something. Unknown customer (-1) excluded.
+	measure Customers =
+			CALCULATE(DISTINCTCOUNT(fact_sales[customer_id]),
+			    fact_sales[line_type] = "sale", fact_sales[customer_id] <> -1)
+		formatString: #,0
+		displayFolder: Orders & Customers
+		lineageTag: 0096ed82-2fa4-451b-93c6-520ecf825d13
+
+	/// Net Revenue for the same period one year earlier.
+	measure 'Net Revenue PY' = CALCULATE([Net Revenue], SAMEPERIODLASTYEAR(Calendar[Date]))
+		formatString: £#,0
+		displayFolder: Time Comparison
+		lineageTag: 40d0c47b-8761-4da9-a74b-5ce210748b07
+
+	/// Growth of Net Revenue versus the same period last year.
+	measure 'YoY %' = DIVIDE([Net Revenue] - [Net Revenue PY], [Net Revenue PY])
+		formatString: 0.0%
+		displayFolder: Time Comparison
+		lineageTag: 000e601e-1366-402f-9bd3-45a550d98d70
+
+	/// Number of lines classified as error (price 0). They do not change revenue.
+	measure 'Error Lines' = CALCULATE(COUNTROWS(fact_sales), fact_sales[line_type] = "error")
+		formatString: #,0
+		displayFolder: Data Quality
+		lineageTag: ed84bb95-3007-47b6-be0d-4e347aae8c76
+
+	/// Units sold on sale lines. Refunds and error lines are excluded.
+	measure 'Units Sold' = CALCULATE(SUM(fact_sales[quantity]), fact_sales[line_type] = "sale")
+		formatString: #,0
+		displayFolder: Products
+		lineageTag: 37def178-4316-4af8-a8b0-661397310f5c
+
+	/// Number of known customers who bought in the selected quarter(s).
+	measure 'Active Customers' = COUNTROWS('Customers by Quarter')
+		formatString: #,0
+		displayFolder: Retention
+		lineageTag: 4b38eac7-923c-45b6-8d24-842b152e02f7
+
+	/// Share of the customers of a quarter who bought again in the following quarter. Average of a 0/1 column.
+	measure 'Quarterly Retention' = AVERAGE('Customers by Quarter'[Back Next Quarter])
+		formatString: 0.0%
+		displayFolder: Retention
+		lineageTag: 11deedbf-87eb-4d3f-95fb-9154f38fe945
+
+	/// Number of distinct products sold (sale lines only).
+	measure 'Products Sold' = CALCULATE(DISTINCTCOUNT(fact_sales[stock_code]), fact_sales[line_type] = "sale")
+		formatString: #,0
+		displayFolder: Products
+		lineageTag: 8aabf6e7-7dd6-4523-b164-dad120b3e2ce
+
+	/// Average price of one unit sold: gross revenue divided by units sold.
+	measure 'Avg Unit Price' = DIVIDE([Gross Revenue], [Units Sold])
+		formatString: £#,0.00
+		displayFolder: Products
+		lineageTag: 2a7ea1b5-c6b4-42f7-a648-d9922cd1bd6e
+
+	/// Average number of units in one order.
+	measure 'Units per Order' = DIVIDE([Units Sold], [Orders])
+		formatString: #,0
+		displayFolder: Products
+		lineageTag: 22e33ebf-ec5c-4917-9f5e-45bd5b993541
+
+	/// Customers of the quarter who bought again in the following quarter.
+	measure 'Retained Customers' = SUM('Customers by Quarter'[Back Next Quarter])
+		formatString: #,0
+		displayFolder: Retention
+		lineageTag: 7f150827-93af-4285-8482-914bb9130481
+
+	/// Customers of the current customer group as a share of all customers.
+	measure 'Share of Customers' = DIVIDE([Customers], CALCULATE([Customers], REMOVEFILTERS(customer[Customer Group])))
+		formatString: 0.0%
+		displayFolder: Concentration
+		lineageTag: 1539cd52-1ad0-4586-af43-be255ad448a0
+
+	/// Net Revenue of the current customer group as a share of the Net Revenue of all customers.
+	measure 'Share of Net Revenue' = DIVIDE([Net Revenue], CALCULATE([Net Revenue], REMOVEFILTERS(customer[Customer Group])))
+		formatString: 0.0%
+		displayFolder: Concentration
+		lineageTag: 11369571-096c-4d2d-9fa8-e9ea6dada688
+
+	/// Empty placeholder column created with the table. Hidden, not used.
+	column 'Colonne 1'
+		dataType: string
+		isHidden
+		lineageTag: 959010e7-2d55-4588-8826-cde8c6585053
+		summarizeBy: none
+		sourceColumn: Colonne 1
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Colonne 1" = _t]),
+				    #"Type modifié" = Table.TransformColumnTypes(Source,{{"Colonne 1", type text}})
+				in
+				    #"Type modifié"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
