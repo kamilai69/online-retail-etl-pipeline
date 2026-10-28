@@ -6,7 +6,7 @@ load_dotenv()
 
 
 def get_engine():
-    """Crée l'engine SQLAlchemy à partir des infos du .env."""
+    """Create SQLAlchemy's engine"""
     url = URL.create(
         drivername="postgresql+psycopg",
         username=os.getenv("POSTGRES_USER"),

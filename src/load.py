@@ -13,7 +13,7 @@ COLUMN_NAMES = {
 }
 
 def rename_columns(df):
-    """Rename the colmums to fit with the standars naming column of PostgreSQL"""
+    """Rename the columns to fit with the standard naming column of PostgreSQL"""
     df = df.rename(columns=COLUMN_NAMES)
     return df
 

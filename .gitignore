@@ -221,3 +221,11 @@ __marimo__/
 
 #docker
 .env
+
+# PowerBI
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# Local only
+_backup/
+CONTEXTE_CLAUDE*.md

@@ -4,15 +4,18 @@ from transform import transform
 from load import load
 from model import build_model
 
-def main() :
+
+def main():
     engine = get_engine()
-    print("Engine retreived")
+    print("Engine acquired.")
     df = transform(extract())
     print("Transformation done.")
     load(df, engine, table="sales")
-    print("Loading done")
+    print("Loading done.")
     build_model(engine)
-    print("SQL modification done")
+    print("SQL modification done.")
+    print("End of the pipeline.")
+
 
 if __name__ == "__main__":
     main()

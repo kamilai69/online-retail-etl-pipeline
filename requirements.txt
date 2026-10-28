@@ -1,0 +1,6 @@
+pandas
+kagglehub
+sqlalchemy
+psycopg[binary]
+python-dotenv
+jupyter
