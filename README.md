@@ -134,6 +134,10 @@ Then open `powerbi/online-retail.pbip` and click **Refresh**. Power BI asks for 
 - No cost data, so no margin analysis.
 - Some cleaning choices are assumptions, for example "Korea" read as South Korea. They are all documented in the notebook.
 
+## License
+
+This project is under the [MIT License](LICENSE): you can use, modify and share it freely, as long as you credit me. If you use it, I'd be happy to hear about it: [kamilmajeri07@gmail.com](mailto:kamilmajeri07@gmail.com).
+
 ## About me
 
 I'm Kamil Majeri, a 2nd-year **BUT Informatique** student at **IUT Lyon 1 (Université Claude Bernard)**. I'm looking for:
